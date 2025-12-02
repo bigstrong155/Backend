@@ -50,9 +50,10 @@ async def lifespan(app: FastAPI):
         
         # 测试数据库连接
         from app.db.session import get_engine
+        from sqlalchemy import text
         engine = get_engine()
         async with engine.connect() as conn:
-            await conn.execute("SELECT 1")
+            await conn.execute(text("SELECT 1"))
         logger.info("✓ 数据库连接成功")
     except Exception as e:
         logger.error(f"✗ 数据库连接失败: {str(e)}")
