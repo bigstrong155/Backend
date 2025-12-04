@@ -79,7 +79,6 @@ async def get_user_from_api_key_with_cache(
             user = User(
                 id=cached_data["id"],
                 username=cached_data["username"],
-                email=cached_data["email"],
                 is_active=cached_data["is_active"],
                 beta=cached_data.get("beta", 0)
             )
@@ -133,7 +132,6 @@ async def get_user_from_api_key_with_cache(
         user_data = {
             "id": user.id,
             "username": user.username,
-            "email": user.email,
             "is_active": user.is_active,
             "beta": user.beta,
             "_config_type": key_record.config_type

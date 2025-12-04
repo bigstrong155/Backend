@@ -311,7 +311,6 @@ class AuthService:
                 user = User(
                     id=cached_data["id"],
                     username=cached_data["username"],
-                    email=cached_data["email"],
                     is_active=cached_data["is_active"],
                     beta=cached_data.get("beta", 0)
                 )
@@ -340,7 +339,6 @@ class AuthService:
             user_data = {
                 "id": user.id,
                 "username": user.username,
-                "email": user.email,
                 "is_active": user.is_active,
                 "beta": user.beta
             }
