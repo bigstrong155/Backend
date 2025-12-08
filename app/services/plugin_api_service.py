@@ -376,6 +376,9 @@ class PluginAPIService:
             
         Yields:
             流式响应数据
+            
+        Note:
+            当上游返回错误状态码时，会生成一个SSE格式的错误消息
         """
         # 获取用户的API密钥
         api_key = await self.get_user_api_key(user_id)
@@ -398,7 +401,32 @@ class PluginAPIService:
                 headers=headers,
                 timeout=httpx.Timeout(1200.0, connect=60.0)
             ) as response:
-                response.raise_for_status()
+                # 检查响应状态码，如果是错误状态码，读取错误内容并生成SSE格式的错误消息
+                if response.status_code >= 400:
+                    # 读取错误响应内容
+                    error_content = await response.aread()
+                    try:
+                        import json
+                        error_data = json.loads(error_content.decode('utf-8'))
+                    except Exception:
+                        error_data = {"detail": error_content.decode('utf-8', errors='replace')}
+                    
+                    # 记录错误日志
+                    logger.error(f"上游API返回错误: status={response.status_code}, url={url}, error={error_data}")
+                    
+                    # 生成SSE格式的错误消息
+                    import json
+                    error_response = {
+                        "error": {
+                            "message": error_data.get("detail") or error_data.get("error", {}).get("message") or str(error_data),
+                            "type": "upstream_error",
+                            "code": response.status_code
+                        }
+                    }
+                    yield f"data: {json.dumps(error_response)}\n\n".encode('utf-8')
+                    yield b"data: [DONE]\n\n"
+                    return
+                
                 async for chunk in response.aiter_raw():
                     if chunk:
                         yield chunk
