@@ -1,4 +1,5 @@
 {
     "ignore_dockerfile": true,
+    "build_command": "pip install -e .",
     "start_command": "uvicorn app.main:app --host 0.0.0.0 --port 8008"
 }
