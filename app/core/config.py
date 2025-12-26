@@ -36,13 +36,13 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = Field(default=7, description="Refresh Token 过期时间（天）")
     refresh_token_secret_key: Optional[str] = Field(default=None, description="Refresh Token 密钥（默认使用 JWT 密钥）")
     
-    # OAuth 配置
-    oauth_client_id: str = Field(..., description="OAuth Client ID")
-    oauth_client_secret: str = Field(..., description="OAuth Client Secret")
-    oauth_redirect_uri: str = Field(..., description="OAuth 回调地址")
-    oauth_authorization_endpoint: str = Field(..., description="OAuth 授权端点")
-    oauth_token_endpoint: str = Field(..., description="OAuth 令牌端点")
-    oauth_user_info_endpoint: str = Field(..., description="OAuth 用户信息端点")
+    # OAuth 配置（可选，如果不配置则 OAuth 登录功能不可用）
+    oauth_client_id: Optional[str] = Field(default=None, description="OAuth Client ID")
+    oauth_client_secret: Optional[str] = Field(default=None, description="OAuth Client Secret")
+    oauth_redirect_uri: Optional[str] = Field(default=None, description="OAuth 回调地址")
+    oauth_authorization_endpoint: str = Field(default="https://connect.linux.do/oauth2/authorize", description="OAuth 授权端点")
+    oauth_token_endpoint: str = Field(default="https://connect.linux.do/oauth2/token", description="OAuth 令牌端点")
+    oauth_user_info_endpoint: str = Field(default="https://connect.linux.do/api/user", description="OAuth 用户信息端点")
 
     # GitHub OAuth
     github_client_id: str = Field(default="", env="GITHUB_CLIENT_ID")
